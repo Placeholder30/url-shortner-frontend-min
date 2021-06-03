@@ -1,23 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
-
+import "./App.scss";
+import { useState } from "react";
 function App() {
+  const [longUrl, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState(null);
+  const BACKEND_URL = process.env.REACT_APP_BACKEND;
+  const postData = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ longUrl: longUrl.trim() }),
+  };
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}`, postData);
+      if (response.status === 200) {
+        const url = await response.json();
+        setShortUrl(url.message);
+        setUrl(`${BACKEND_URL}/${shortUrl}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Trimmer</h1>
+      <p>Shorten your URL</p>
+      <input
+        type="text"
+        placeholder="paste your url here"
+        value={longUrl}
+        onChange={(e) => {
+          setUrl(e.target.value);
+        }}
+      />
+
+      <button onClick={handleSubmit}>Trim</button>
     </div>
   );
 }
