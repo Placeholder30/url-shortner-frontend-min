@@ -40,7 +40,7 @@ function App() {
   return (
     <div className="App">
       <h1>Trimmer</h1>
-      <p>Shorten your URL</p>
+      <p>Take your long URL and make it brief</p>
       <input
         type="text"
         placeholder="paste your url here"
