@@ -1,7 +1,10 @@
-import "./App.scss";
 import { useState } from "react";
+import "./App.scss";
+
 function App() {
   const [longUrl, setUrl] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [clipboardButton, setClipboardButton] = useState(false);
   const BACKEND_URL = process.env.REACT_APP_BACKEND;
   const postData = {
     method: "POST",
@@ -16,10 +19,23 @@ function App() {
       if (response.status === 200) {
         const url = await response.json();
         setUrl(`${BACKEND_URL}/${url.message}`);
+        setClipboardButton(true);
+      } else {
+        setErrorMessage(
+          "there was a problem processing your request, please try again"
+        );
       }
     } catch (error) {
       console.error(error);
     }
+  };
+  const handleCopyToClipboard = () => {
+    console.log(longUrl);
+    navigator.clipboard.writeText(longUrl).then(() => {
+      alert("succesfully copied to clipboard");
+      setClipboardButton(false);
+      setUrl("");
+    });
   };
   return (
     <div className="App">
@@ -33,8 +49,12 @@ function App() {
           setUrl(e.target.value);
         }}
       />
-
-      <button onClick={handleSubmit}>Trim</button>
+      {clipboardButton ? (
+        <button onClick={handleCopyToClipboard}>Copy Url</button>
+      ) : (
+        <button onClick={handleSubmit}>Trim</button>
+      )}
+      <div className="error">{errorMessage}</div>
     </div>
   );
 }
