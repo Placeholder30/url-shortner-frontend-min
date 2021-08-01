@@ -2,7 +2,6 @@ import "./App.scss";
 import { useState } from "react";
 function App() {
   const [longUrl, setUrl] = useState("");
-  const [shortUrl, setShortUrl] = useState(null);
   const BACKEND_URL = process.env.REACT_APP_BACKEND;
   const postData = {
     method: "POST",
@@ -16,8 +15,7 @@ function App() {
       const response = await fetch(`${BACKEND_URL}`, postData);
       if (response.status === 200) {
         const url = await response.json();
-        setShortUrl(url.message);
-        setUrl(`${BACKEND_URL}/${shortUrl}`);
+        setUrl(`${BACKEND_URL}/${url.message}`);
       }
     } catch (error) {
       console.error(error);
