@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.scss";
+import loadingIndicator from "./ellipsis.svg";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND;
 function App() {
   const [longUrl, setUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [clipboardButton, setClipboardButton] = useState(false);
-  const BACKEND_URL = process.env.REACT_APP_BACKEND;
+  const [isLoading, setIsLoading] = useState(false);
+
   const postData = {
     method: "POST",
     headers: {
@@ -14,11 +17,13 @@ function App() {
     body: JSON.stringify({ longUrl: longUrl.trim() }),
   };
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}`, postData);
       if (response.status === 200) {
         const url = await response.json();
         setUrl(`${BACKEND_URL}/${url.message}`);
+        setIsLoading(false);
         setClipboardButton(true);
       } else {
         setErrorMessage(
@@ -26,11 +31,18 @@ function App() {
         );
       }
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
+  useEffect(() => {
+    // heroko tends to sleep so this just pings the server on component mount before the user is ready to paste a link
+    fetch(`${BACKEND_URL}`)
+      .then()
+      .catch((e) => console.log(e));
+  }, []);
+
   const handleCopyToClipboard = () => {
-    console.log(longUrl);
     navigator.clipboard.writeText(longUrl).then(() => {
       alert("succesfully copied to clipboard");
       setClipboardButton(false);
@@ -41,6 +53,11 @@ function App() {
     <div className="App">
       <h1>Trimmer</h1>
       <p>Take your long URL and make it brief</p>
+      {isLoading ? (
+        <div className="loader">
+          <img src={loadingIndicator} alt="" />
+        </div>
+      ) : null}
       <input
         type="text"
         placeholder="paste your url here"
@@ -49,6 +66,7 @@ function App() {
           setUrl(e.target.value);
         }}
       />
+
       {clipboardButton ? (
         <button onClick={handleCopyToClipboard}>Copy Url</button>
       ) : (

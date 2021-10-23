@@ -34,7 +34,11 @@ button {
 .error {
   color: red;
 }
-
+.loader {
+  position: absolute;
+  left: 45vw;
+  bottom: 50vh;
+}
 @media screen and (max-width: 500px) {
   input {
     height: 3rem;
