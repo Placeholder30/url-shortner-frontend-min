@@ -37,7 +37,7 @@ button {
 .loader {
   position: absolute;
   left: 45vw;
-  bottom: 50vh;
+  bottom: 55vh;
 }
 @media screen and (max-width: 500px) {
   input {
@@ -45,7 +45,7 @@ button {
     font-size: 14px;
   }
   .loader {
-    left: 39vw;
+    left: 25vw;
   }
   button {
     height: 2rem;
